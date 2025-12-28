@@ -1,17 +1,19 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"os"
 	"sync"
+
+	"github.com/spf13/viper"
 )
 
 type ParamsConfig struct {
-	ApiKey    string `mapstructure:"APIKey"`
-	Endpoint  string `mapstructure:"Endpoint"`
-	Embedding string `mapstructure:"Embedding"`
-	ChatModel string `mapstructure:"ChatModel"`
-	Redis     struct {
+	ApiKey           string `mapstructure:"APIKey"`
+	Endpoint         string `mapstructure:"Endpoint"`
+	Embedding        string `mapstructure:"Embedding"`
+	EmbeddingBaseURL string `mapstructure:"EmbeddingBaseURL"`
+	ChatModel        string `mapstructure:"ChatModel"`
+	Redis            struct {
 		Host string `mapstructure:"Host"`
 		Port int    `mapstructure:"Port"`
 		DB   int    `mapstructure:"DB"`
@@ -39,8 +41,6 @@ func Map() *ParamsConfig {
 		if err != nil {
 			panic(err)
 		}
-
-		return
 	})
 	return c
 }

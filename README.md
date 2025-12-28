@@ -17,3 +17,13 @@
 
 **具体内容请参考代码内容！**</br>
 **don't speak and show you the codes!**
+
+
+# 本地启动向量模型
+
+```bash
+cd models
+python download.py
+
+bash run.sh
+``

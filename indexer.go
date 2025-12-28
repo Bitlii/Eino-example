@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	redisInd "github.com/cloudwego/eino-ext/components/indexer/redis"
 )
 

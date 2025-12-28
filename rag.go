@@ -4,8 +4,9 @@ import (
 	"context"
 	"eino/config"
 	"fmt"
+
 	"github.com/cloudwego/eino-ext/components/document/loader/file"
-	embedding "github.com/cloudwego/eino-ext/components/embedding/ark"
+	embedding "github.com/cloudwego/eino-ext/components/embedding/openai"
 	redisInd "github.com/cloudwego/eino-ext/components/indexer/redis"
 	"github.com/cloudwego/eino-ext/components/model/ark"
 	redisRet "github.com/cloudwego/eino-ext/components/retriever/redis"
@@ -15,6 +16,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+// RAGEngine 定义了一个基于检索增强生成（RAG）的引擎结构体
 type RAGEngine struct {
 	indexName string
 	prefix    string
@@ -22,15 +24,14 @@ type RAGEngine struct {
 	dimension int
 
 	redis    *redis.Client
-	embedder *embedding.Embedder
+	embedder *embedding.Embedder // 嵌入器，用于将文本转换为向量表示
+	Err      error
 
-	Err error
-
-	Loader    *file.FileLoader
-	Splitter  document.Transformer
-	Retriever *redisRet.Retriever
-	Indexer   *redisInd.Indexer
-	ChatModel *ark.ChatModel
+	Loader    *file.FileLoader     // 用于加载文档的加载器
+	Splitter  document.Transformer // 用于拆分文档的拆分器
+	Retriever *redisRet.Retriever  // 用于检索相关文档的检索器
+	Indexer   *redisInd.Indexer    // 用于索引文档的索引器
+	ChatModel *ark.ChatModel       // 用于生成回答的聊天模型
 }
 
 func InitRAGEngine(ctx context.Context, index string, prefix string) (*RAGEngine, error) {
@@ -52,9 +53,11 @@ func initRAGEngine(ctx context.Context, index string, prefix string) (*RAGEngine
 
 	c := config.Map()
 
+	// 创建 embedder 用于将文档转成向量，Indexer与Retriever均依赖于该组件。
 	embedder, err := embedding.NewEmbedder(ctx, &embedding.EmbeddingConfig{
-		APIKey: c.ApiKey,
-		Model:  c.Embedding,
+		// APIKey: c.ApiKey,    // API Key
+		Model:   c.Embedding, // 使用的模型名称
+		BaseURL: c.EmbeddingBaseURL,
 	})
 
 	if err != nil {
