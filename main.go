@@ -10,13 +10,14 @@ import (
 )
 
 const (
-	prefix = "OuterCyrex:"
-	index  = "OuterIndex"
+	prefix = "OuterCyrex:" // 前缀
+	index  = "OuterIndex"  // 索引名称
 )
 
 func main() {
 	ctx := context.Background()
 
+	// 通过 indexName 和 prefix 初始化 RAGEngine
 	r, err := InitRAGEngine(ctx, index, prefix)
 	if err != nil {
 		panic(err)

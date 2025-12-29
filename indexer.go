@@ -21,10 +21,13 @@ func (r *RAGEngine) newIndexer(ctx context.Context) {
 }
 
 func (r *RAGEngine) InitVectorIndex(ctx context.Context) error {
+	// 检查索引是否存在
 	if _, err := r.redis.Do(ctx, "FT.INFO", r.indexName).Result(); err == nil {
 		return nil
 	}
 
+	// 创建索引
+	// 参考 https://redis.ac.cn/docs/interact/search-and-query/indexing/
 	createIndexArgs := []interface{}{
 		"FT.CREATE", r.indexName,
 		"ON", "HASH",
